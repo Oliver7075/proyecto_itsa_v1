@@ -321,11 +321,40 @@ return [
             'can' => 'manage-blog',
         ],
         [
-            'text' => 'configuracion',
-            'url' => 'admin/instituto',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
+            'text' => 'Administración',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => 'Instituto',
+                    'url' => 'admin/instituto',
+                ],
+                [
+                    'text' => 'Empleados',
+                    'url' => 'admin/empleados',
+                ],
+                [
+                    'text' => 'Usuarios',
+                    'url' => 'admin/usuarios',
+                ],
+            ],
+        ],
+        [
+            'text' => 'Planes de Estudio',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => 'Carreras',
+                    'url' => 'planes/carreras',
+                ],
+                [
+                    'text' => 'Menciones',
+                    'url' => 'planes/menciones',
+                ],
+                [
+                    'text' => 'Materias',
+                    'url' => 'planes/materias',
+                ],
+            ],
         ],
         // titulo opcional['header' => 'account_settings'],
         [

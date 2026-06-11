@@ -89,20 +89,8 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Token (Middleware)</label>
+                        <label>Token</label>
                         <input type="text" name="token_middleware" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Rector *</label>
-                        <input type="text" name="rector" class="form-control" required>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Director Académico *</label>
-                        <input type="text" name="director_academico" class="form-control" required>
                     </div>
                 </div>
             </div>

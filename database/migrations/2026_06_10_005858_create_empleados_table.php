@@ -8,19 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('empleado', function (Blueprint $table) {
+        Schema::create('empleados', function (Blueprint $table) {
             $table->id('id_persona');
             $table->string('abreviaturaprofesion')->nullable();
             $table->string('codigo')->nullable();
             $table->timestamps();
 
             // Relación uno a uno / herencia con persona
-            $table->foreign('id_persona')->references('id_persona')->on('persona')->onDelete('cascade');
+            $table->foreign('id_persona')->references('id_persona')->on('personas')->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('empleado');
+        Schema::dropIfExists('empleados');
     }
 };

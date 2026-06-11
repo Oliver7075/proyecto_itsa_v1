@@ -30,8 +30,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_rector')->nullable();
             $table->timestamps();
 
-            $table->foreign('id_directoracademico')->references('id_persona')->on('empleado')->onDelete('set null');
-            $table->foreign('id_rector')->references('id_persona')->on('empleado')->onDelete('set null');
+            $table->foreign('id_directoracademico')->references('id_persona')->on('empleados')->onDelete('set null');
+            $table->foreign('id_rector')->references('id_persona')->on('empleados')->onDelete('set null');
         });
     }
 

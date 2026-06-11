@@ -8,7 +8,7 @@ use App\Models\Instituto;
 class InstitutoController extends Controller
 {
     public function index() {
-        $instituto = Instituto::first(); // Asumiendo que solo hay un registro de instituto
+        $instituto = Instituto::first() ?? new Instituto();
         return view('admin.instituto.index', compact('instituto'));
     }
 

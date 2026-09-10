@@ -95,6 +95,18 @@
                         <input type="text" name="codigo" class="form-control">
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <label>Rol *</label>
+                        <select name="id_rol" class="form-control" required>
+                            <option value="">Seleccione un rol</option>
+                            @foreach($roles as $rol)
+                                <option value="{{ $rol->id_rol }}">{{ $rol->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div class="card-footer text-right">

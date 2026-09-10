@@ -316,11 +316,6 @@ return [
             'text' => 'search',
         ],
         [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ],
-        [
             'text' => 'Administración',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [
@@ -331,6 +326,10 @@ return [
                 [
                     'text' => 'Empleados',
                     'url' => 'admin/empleados',
+                ],
+                [
+                    'text' => 'Roles',
+                    'url' => 'admin/roles',
                 ],
                 [
                     'text' => 'Usuarios',
@@ -347,80 +346,35 @@ return [
                     'url' => 'planes/carreras',
                 ],
                 [
-                    'text' => 'Menciones',
-                    'url' => 'planes/menciones',
-                ],
-                [
                     'text' => 'Materias',
                     'url' => 'planes/materias',
                 ],
             ],
         ],
-        // titulo opcional['header' => 'account_settings'],
         [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
+            'text' => 'Gestiones Academicas',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'Calendario Academico',
+                    'url' => 'planes/calendario',
                 ],
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
+                    'text' => 'Gestiones Academicas',
+                    'url' => 'planes/gestiones',
                 ],
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'Grupos',
+                    'url' => 'planes/grupos',
+                ],
+                [
+                    'text' => 'Horarios',
+                    'url' => 'planes/horarios',
                 ],
             ],
         ],
-        ['header' => 'labels'],
-        [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ],
+        // titulo opcional['header' => 'account_settings'],
+        
     ],
 
     /*

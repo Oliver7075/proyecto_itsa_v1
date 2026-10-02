@@ -7,12 +7,13 @@ use App\Models\GestionAcademica;
 use App\Models\Grupo;
 use App\Models\Materia;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class GrupoController extends Controller
 {
     public function index(Request $request)
     {
-        $gestiones = GestionAcademica::orderByDesc('gestion')->orderBy('periodo')->get();
+        $gestiones = GestionAcademica::habilitadas()->orderByDesc('gestion')->orderBy('periodo')->get();
         $carreras = Carrera::orderBy('nombre')->get();
         $grupos = $this->query($request)->get();
 
@@ -21,7 +22,7 @@ class GrupoController extends Controller
 
     public function programar(Request $request)
     {
-        $gestiones = GestionAcademica::orderByDesc('gestion')->orderBy('periodo')->get();
+        $gestiones = GestionAcademica::habilitadas()->orderByDesc('gestion')->orderBy('periodo')->get();
         $carreras = Carrera::orderBy('nombre')->get();
         $materias = Materia::with('carrera')->orderBy('nombre')->get();
 
@@ -33,6 +34,7 @@ class GrupoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate($this->rules());
+        $this->ensureEnabled($validated['id_gestionacademica']);
         Grupo::create($validated);
 
         return redirect()->route('admin.grupos.index', [
@@ -43,7 +45,8 @@ class GrupoController extends Controller
     public function edit($id)
     {
         $grupo = Grupo::with('materia')->findOrFail($id);
-        $gestiones = GestionAcademica::orderByDesc('gestion')->orderBy('periodo')->get();
+        $this->ensureEnabled($grupo->id_gestionacademica);
+        $gestiones = GestionAcademica::habilitadas()->orderByDesc('gestion')->orderBy('periodo')->get();
         $materias = Materia::orderBy('nombre')->get();
 
         return view('gestiones.grupos.edit', compact('grupo', 'gestiones', 'materias'));
@@ -52,7 +55,9 @@ class GrupoController extends Controller
     public function update(Request $request, $id)
     {
         $grupo = Grupo::findOrFail($id);
+        $this->ensureEnabled($grupo->id_gestionacademica);
         $validated = $request->validate($this->rules());
+        $this->ensureEnabled($validated['id_gestionacademica']);
         $grupo->update($validated);
 
         return redirect()->route('admin.grupos.index', [
@@ -64,6 +69,7 @@ class GrupoController extends Controller
     {
         $grupo = Grupo::findOrFail($id);
         $gestion = $grupo->id_gestionacademica;
+        $this->ensureEnabled($gestion);
         $grupo->delete();
 
         return redirect()->route('admin.grupos.index', [
@@ -95,5 +101,14 @@ class GrupoController extends Controller
             'id_materia' => ['nullable', 'exists:materia,id_materia'],
             'id_persona' => ['nullable', 'exists:personas,id_persona'],
         ];
+    }
+
+    private function ensureEnabled(int $idGestion): void
+    {
+        if (!GestionAcademica::habilitadas()->whereKey($idGestion)->exists()) {
+            throw ValidationException::withMessages([
+                'id_gestionacademica' => 'La gestión académica seleccionada está deshabilitada.',
+            ]);
+        }
     }
 }

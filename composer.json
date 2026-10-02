@@ -11,6 +11,8 @@
         "jeroennoten/laravel-adminlte": "^3.16",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "phpoffice/phpspreadsheet": "^2.2",
+        "smalot/pdfparser": "^2.12",
         "laravel/ui": "^4.6"
     },
     "require-dev": {

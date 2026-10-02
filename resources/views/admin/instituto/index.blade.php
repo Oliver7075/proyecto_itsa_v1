@@ -17,14 +17,14 @@
         <div class="card-body">
             <div class="form-group">
                 <label>Logo</label>
-                <input type="file" name="logo" class="form-control">
+                        <input type="file" name="logo" class="form-control" accept=".jpg,.jpeg,.png,.webp">
             </div>
 
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Nombre regulador *</label>
-                        <input type="text" name="nombre_regulador" class="form-control" required>
+                        <input type="text" name="nombreregulador" class="form-control" value="{{ old('nombreregulador', $instituto->nombreregulador) }}" required>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -48,7 +48,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Nombre impuestos</label>
-                        <input type="text" name="nombre_impuestos" class="form-control">
+                        <input type="text" name="nombreimpuestos" class="form-control" value="{{ old('nombreimpuestos', $instituto->nombreimpuestos) }}">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -60,7 +60,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Actividad económica</label>
-                        <input type="text" name="actividad_economica" class="form-control">
+                        <input type="text" name="actividadeconomica" class="form-control" value="{{ old('actividadeconomica', $instituto->actividadeconomica) }}">
                     </div>
                 </div>
             </div>
@@ -69,13 +69,13 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Precio crédito *</label>
-                        <input type="number" name="precio_credito" class="form-control" required>
+                        <input type="number" name="preciocredito" class="form-control" min="0" value="{{ old('preciocredito', $instituto->preciocredito) }}" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Resolución ministerial *</label>
-                        <input type="text" name="resolucion_ministerial" class="form-control" required>
+                        <input type="text" name="resolucionministerial" class="form-control" value="{{ old('resolucionministerial', $instituto->resolucionministerial) }}" required>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -90,7 +90,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Token</label>
-                        <input type="text" name="token_middleware" class="form-control">
+                        <input type="text" name="token" class="form-control" value="{{ old('token', $instituto->token) }}">
                     </div>
                 </div>
             </div>

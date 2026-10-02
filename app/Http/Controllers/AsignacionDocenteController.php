@@ -7,6 +7,7 @@ use App\Models\GestionAcademica;
 use App\Models\Grupo;
 use App\Models\Persona;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class AsignacionDocenteController extends Controller
 {
@@ -34,6 +35,7 @@ class AsignacionDocenteController extends Controller
     public function create(Request $request)
     {
         $grupo = Grupo::with('materia')->findOrFail($request->integer('id_grupo'));
+        $this->ensureEnabled($grupo->id_gestionacademica);
         $docentes = $this->docentes();
 
         return view('gestiones.horarios.create', compact('grupo', 'docentes'));
@@ -42,6 +44,7 @@ class AsignacionDocenteController extends Controller
     public function edit($id)
     {
         $grupo = Grupo::with('materia')->findOrFail($id);
+        $this->ensureEnabled($grupo->id_gestionacademica);
         $docentes = $this->docentes();
 
         return view('gestiones.horarios.edit', compact('grupo', 'docentes'));
@@ -54,6 +57,7 @@ class AsignacionDocenteController extends Controller
         ]);
 
         $grupo = Grupo::findOrFail($id);
+        $this->ensureEnabled($grupo->id_gestionacademica);
         $grupo->update(['id_persona' => $validated['id_persona'] ?? null]);
 
         return redirect()->route('admin.asignacion-docente.index', [
@@ -67,5 +71,14 @@ class AsignacionDocenteController extends Controller
             ->orderBy('primerapellido')
             ->orderBy('nombre')
             ->get();
+    }
+
+    private function ensureEnabled(int $idGestion): void
+    {
+        if (!GestionAcademica::habilitadas()->whereKey($idGestion)->exists()) {
+            throw ValidationException::withMessages([
+                'id_gestionacademica' => 'La gestión académica seleccionada está deshabilitada.',
+            ]);
+        }
     }
 }

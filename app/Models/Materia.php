@@ -30,4 +30,28 @@ class Materia extends Model
     {
         return $this->hasMany(Grupo::class, 'id_materia', 'id_materia');
     }
+
+    public function prerequisitos()
+    {
+        return $this->belongsToMany(
+            self::class,
+            'prerequisito',
+            'id_materia',
+            'id_prerequisito',
+            'id_materia',
+            'id_materia'
+        )->withTimestamps();
+    }
+
+    public function materiasDependientes()
+    {
+        return $this->belongsToMany(
+            self::class,
+            'prerequisito',
+            'id_prerequisito',
+            'id_materia',
+            'id_materia',
+            'id_materia'
+        )->withTimestamps();
+    }
 }

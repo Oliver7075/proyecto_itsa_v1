@@ -17,26 +17,34 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Codigo</th>Nombre<th></th><th>Regimen</th><th>Nivel Academico</th><th>Version</th>
-                    <th>Resolucion ministerial 1</th><th>Resolucion ministerial 2</th><th>Resolucion ministerial 3</th><th>Mencion</th><th>Creditaje matricula</th><th>Jefe de Carrera</th><th>Acciones</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Nivel académico</th>
+                    <th>Versión</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($carreras as $emp)
+                @forelse($carreras as $carrera)
                 <tr>
-                    <td>{{ $emp->persona->primerapellido }}</td>
-                    <td>{{ $emp->persona->segundoapellido }}</td>
-                    <td>{{ $emp->persona->nombre }}</td>
-                    <td>{{ $emp->persona->dni }}</td>
-                    <td>{{ $emp->persona->direccion }}</td>
-                    <td>{{ $emp->persona->telefono }}</td>
-                    <td>{{ $emp->persona->celular }}</td>
-                    <td>{{ $emp->persona->email }}</td>
+                    <td>{{ $carrera->codigo ?? '-' }}</td>
+                    <td>{{ $carrera->nombre }}</td>
+                    <td>{{ $carrera->nivelacademico ?? '-' }}</td>
+                    <td>{{ $carrera->version ?? '-' }}</td>
                     <td>
-                        <a href="{{ route('admin.empleados.edit', $emp->id_persona) }}" class="btn btn-sm btn-default"><i class="fa fa-edit"></i></a>
+                        <a href="{{ route('planes.carreras.edit', $carrera->id_carrera) }}" class="btn btn-sm btn-info" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ route('planes.carreras.materias.import', $carrera->id_carrera) }}" class="btn btn-sm btn-success">
+                            <i class="fas fa-file-upload"></i> Cargar materias
+                        </a>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="5" class="text-center text-muted">No hay carreras registradas.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

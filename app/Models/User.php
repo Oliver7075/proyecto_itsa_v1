@@ -65,6 +65,11 @@ class User extends Authenticatable
         return $this->hasOne(Cuenta::class, 'id_persona', 'id_persona');
     }
 
+    public function carreras()
+    {
+        return $this->belongsToMany(Carrera::class, 'cursa', 'id_persona', 'id_carrera', 'id_persona', 'id_carrera');
+    }
+
     public function tieneAccesoA($url)
     {
         $urlNormalizada = trim((string) $url, '/');

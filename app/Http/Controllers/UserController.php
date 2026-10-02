@@ -27,7 +27,7 @@ class UserController extends Controller
     {
 
         $request->validate([
-            'id_persona' => 'required|exists:personas,id_persona|unique:usuarios,id_persona',
+            'id_persona' => 'required|exists:personas,id_persona|unique:users,id_persona',
         ]);
 
         $persona = Persona::findOrFail($request->id_persona);
@@ -46,7 +46,7 @@ class UserController extends Controller
         $usuario = User::create([
             'id_persona' => $persona->id_persona,
             'usuario'    => $username,
-            'contrasena' => Hash::make($plainPassword),
+            'password'   => Hash::make($plainPassword),
         ]);
 
         // 5. GENERAR Y TRANSMITIR EL PDF DIRECTAMENTE AL NAVEGADOR
@@ -73,7 +73,7 @@ class UserController extends Controller
         $newPlainPassword = Str::password(8, letters: true, numbers: true, symbols: false, spaces: false);
 
         $usuario->update([
-            'contrasena' => Hash::make($newPlainPassword),
+            'password' => Hash::make($newPlainPassword),
         ]);
 
         $data = [

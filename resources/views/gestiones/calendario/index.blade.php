@@ -68,6 +68,7 @@
                         <th>Nombre</th>
                         <th>Descripcion</th>
                         <th>Funcionalidad</th>
+                        <th>Habilitado para</th>
                         <th style="width: 80px;"></th>
                     </tr>
                 </thead>
@@ -81,6 +82,15 @@
                             <td class="text-start ps-2">{{ $actividad->descripcion ?? '-' }}</td>
                             <td>{{ $actividad->funcionalidad ?? '-' }}</td>
                             <td>
+                                @if($actividad->carreras->isNotEmpty())
+                                    Por carrera
+                                @elseif($actividad->usuarios->isNotEmpty())
+                                    Por usuario
+                                @else
+                                    General
+                                @endif
+                            </td>
+                            <td>
                                 <a href="{{ route('admin.actividad.edit', $actividad->id_actividad) }}" class="btn btn-xs btn-link p-0 me-1"><i class="fas fa-edit text-primary"></i></a>
                                 <form action="{{ route('admin.actividad.destroy', $actividad->id_actividad) }}" method="POST" class="d-inline">
                                     @csrf
@@ -91,7 +101,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-start ps-3 py-2 text-muted" style="background-color: #fff;">
+                            <td colspan="8" class="text-start ps-3 py-2 text-muted" style="background-color: #fff;">
                                 Ningún registro encontrado.
                             </td>
                         </tr>

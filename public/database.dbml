@@ -173,17 +173,9 @@ Table carrera {
   id_jefecarrera int [ref: > empleado.id_persona]
 }
 
-Table mencion {
-  id_mencion int [pk, increment]
-  codigo varchar //ak
-  nombre varchar
-  id_carrera int [ref: > carrera.id_carrera]
-}
-
 Table cursa {
   id_persona int [ref: > persona.id_persona]
   id_carrera int [ref: > carrera.id_carrera]
-  id_mencion int [ref: > mencion.id_mencion]
   nivelinicio integer
 }
 
@@ -197,7 +189,6 @@ Table materia {
   nombre varchar
   numero integer
   id_carrera int [ref: > carrera.id_carrera]
-  id_mencion int [ref: > mencion.id_mencion]
 }
 
 Table prerequisito {

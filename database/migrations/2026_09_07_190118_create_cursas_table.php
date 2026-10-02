@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('cursa', function (Blueprint $table) {
             $table->unsignedBigInteger('id_persona');
             $table->unsignedBigInteger('id_carrera');
-            $table->unsignedBigInteger('id_mencion')->nullable();
             $table->integer('nivelinicio')->nullable();
 
             // Clave Primaria Compuesta
@@ -26,9 +25,6 @@ return new class extends Migration
                   ->references('id_carrera')
                 ->on('carreras')
                   ->onDelete('cascade');
-
-            // Descomentar si la tabla 'mencion' existe:
-            // $table->foreign('id_mencion')->references('id_mencion')->on('mencion')->onDelete('set null');
 
             $table->timestamps();
         });

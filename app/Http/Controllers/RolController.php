@@ -46,8 +46,9 @@ class RolController extends Controller
 		MenuResourceSync::sync();
 		$rol = Rol::with('recursos')->findOrFail($id);
 		$recursos = Recurso::orderBy('nombre')->get();
+		$menu = config('adminlte.menu', []);
 
-		return view('admin.roles.edit', compact('rol', 'recursos'));
+		return view('admin.roles.edit', compact('rol', 'recursos', 'menu'));
 	}
 
 	public function update(Request $request, $id)

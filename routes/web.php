@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\InstitutoController;
 use App\Http\Controllers\RecursoController;
 use App\Http\Controllers\RolController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\ActividadController;
 use App\Http\Controllers\AsignacionDocenteController;
 use App\Http\Controllers\GestionAcademicaController;
 use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\MateriaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -45,9 +47,18 @@ Route::post('/admin/recursos/create', [RecursoController::class, 'store'])->name
 Route::get('/planes/carreras', [App\Http\Controllers\CarreraController::class, 'index'])->name('planes.carreras.index')->middleware('auth');
 Route::get('/planes/carreras/create', [App\Http\Controllers\CarreraController::class, 'create'])->name('planes.carreras.create')->middleware('auth');
 Route::post('/planes/carreras/create', [App\Http\Controllers\CarreraController::class, 'store'])->name('planes.carreras.store')->middleware('auth');
+Route::get('/planes/carreras/{id}/materias/import', [MateriaController::class, 'importForm'])->name('planes.carreras.materias.import')->middleware('auth');
+Route::post('/planes/carreras/{id}/materias/import', [MateriaController::class, 'import'])->name('planes.carreras.materias.import.store')->middleware('auth');
 Route::get('/planes/carreras/{id}/edit', [App\Http\Controllers\CarreraController::class, 'edit'])->name('planes.carreras.edit')->middleware('auth');
 Route::put('/planes/carreras/{id}', [App\Http\Controllers\CarreraController::class, 'update'])->name('planes.carreras.update')->middleware('auth');
 Route::delete('/planes/carreras/{id}', [App\Http\Controllers\CarreraController::class, 'destroy'])->name('planes.carreras.destroy')->middleware('auth');
+//rutas para materias y prerequisitos
+Route::get('/planes/materias', [MateriaController::class, 'index'])->name('planes.materias.index')->middleware('auth');
+Route::get('/planes/materias/create', [MateriaController::class, 'create'])->name('planes.materias.create')->middleware('auth');
+Route::post('/planes/materias', [MateriaController::class, 'store'])->name('planes.materias.store')->middleware('auth');
+Route::get('/planes/materias/{id}/edit', [MateriaController::class, 'edit'])->name('planes.materias.edit')->middleware('auth');
+Route::put('/planes/materias/{id}', [MateriaController::class, 'update'])->name('planes.materias.update')->middleware('auth');
+Route::delete('/planes/materias/{id}', [MateriaController::class, 'destroy'])->name('planes.materias.destroy')->middleware('auth');
 //rutas para gestiones académicas
 Route::get('/planes/gestiones', [GestionAcademicaController::class, 'index'])->name('admin.gestionacademica.index')->middleware('auth');
 Route::get('/planes/gestiones/create', [GestionAcademicaController::class, 'create'])->name('admin.gestionacademica.create')->middleware('auth');

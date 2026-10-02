@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Carrera;
+use App\Models\Empleado;
+use App\Models\Instituto;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CarreraController extends Controller
 {
@@ -15,109 +18,63 @@ class CarreraController extends Controller
 
     public function create()
     {
-        return view('planes.carreras.create');
+        return view('planes.carreras.create', $this->formData());
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required',
-            'primerapellido' => 'required',
-            'segundoapellido' => 'required',
-            'dni' => 'required|unique:personas,dni',
-            // Agrega validaciones para otros campos según sea necesario
-        ]);
+        $validated = $request->validate($this->rules());
+        Carrera::create($validated);
 
-        // Crear una nueva persona
-        $persona = Persona::create([
-            'nombre' => $request->nombre,
-            'primerapellido' => $request->primerapellido,
-            'segundoapellido' => $request->segundoapellido,
-            'dni' => $request->dni,
-            'fechanacimiento' => $request->fechanacimiento,
-            'lugarnacimiento' => $request->lugarnacimiento,
-            'nacionalidad' => $request->nacionalidad,
-            'sexo' => $request->sexo,
-            'lugarexpedicion' => $request->lugarexpedicion,
-            'direccion' => $request->direccion,
-            'telefono' => $request->telefono,
-            'celular' => $request->celular,
-            'email' => $request->email,
-            'foto' => $request->foto,
-            'tipo' => 'empleado',
-            // Agrega otros campos según sea necesario
-        ]);
-
-        // Crear un nuevo empleado asociado a la persona creada
-        Empleado::create([
-            'id_persona' => $persona->id_persona,
-            'abreviaturaprofesion' => $request->abreviaturaprofesion,
-            'codigo' => $request->codigo,
-        ]);
-
-        return redirect()->route('admin.empleados.index')->with('success', 'Empleado creado exitosamente.');
+        return redirect()->route('planes.carreras.index')->with('success', 'Carrera creada correctamente.');
     }
 
     public function edit($id)
     {
-        $empleado = Empleado::findOrFail($id);
-        return view('admin.empleados.edit', compact('empleado'));
+        $carrera = Carrera::findOrFail($id);
+
+        return view('planes.carreras.edit', array_merge(['carrera' => $carrera], $this->formData()));
     }
 
     public function update(Request $request, $id)
     {
-        $empleado = Empleado::findOrFail($id);
-        $persona = $empleado->persona;
+        $carrera = Carrera::findOrFail($id);
+        $validated = $request->validate($this->rules($carrera->id_carrera));
+        $carrera->update($validated);
 
-        $request->validate([
-            'nombre' => 'required',
-            'primerapellido' => 'required',
-            'segundoapellido' => 'required',
-            'dni' => 'required|unique:personas,dni,' . $persona->id_persona . ',id_persona',
-            // Agrega validaciones para otros campos según sea necesario
-        ]);
-
-        // Actualizar la persona asociada al empleado
-        $persona->update([
-            'nombre' => $request->nombre,
-            'primerapellido' => $request->primerapellido,
-            'segundoapellido' => $request->segundoapellido,
-            'dni' => $request->dni,
-            'fechanacimiento' => $request->fechanacimiento,
-            'lugarnacimiento' => $request->lugarnacimiento,
-            'nacionalidad' => $request->nacionalidad,
-            'sexo' => $request->sexo,
-            'lugarexpedicion' => $request->lugarexpedicion,
-            'direccion' => $request->direccion,
-            'telefono' => $request->telefono,
-            'celular' => $request->celular,
-            'email' => $request->email,
-            'foto' => $request->foto,
-            'tipo' => 'empleado',
-
-            // Agrega otros campos según sea necesario
-        ]);
-
-        // Actualizar el empleado
-        $empleado->update([
-            'abreviaturaprofesion' => $request->abreviaturaprofesion,
-            'codigo' => $request->codigo,
-        ]);
-
-        return redirect()->route('admin.empleados.index')->with('success', 'Empleado actualizado exitosamente.');
+        return redirect()->route('planes.carreras.index')->with('success', 'Carrera actualizada correctamente.');
     }
 
     public function destroy($id)
     {
-        $empleado = Empleado::findOrFail($id);
-        $persona = $empleado->persona;
+        Carrera::findOrFail($id)->delete();
 
-        // Eliminar el empleado
-        $empleado->delete();
+        return redirect()->route('planes.carreras.index')->with('success', 'Carrera eliminada correctamente.');
+    }
 
-        // Eliminar la persona asociada al empleado
-        $persona->delete();
+    private function formData(): array
+    {
+        return [
+            'institutos' => Instituto::orderBy('nombreinstituto')->get(),
+            'jefesCarrera' => Empleado::with('persona')->get(),
+        ];
+    }
 
-        return redirect()->route('admin.empleados.index')->with('success', 'Empleado eliminado exitosamente.');
+    private function rules(?int $id = null): array
+    {
+        return [
+            'codigo' => ['required', 'string', 'max:255', Rule::unique('carreras', 'codigo')->ignore($id, 'id_carrera')],
+            'nombre' => ['required', 'string', 'max:255'],
+            'creditajeadmision' => ['nullable', 'integer', 'min:0'],
+            'creditajematricula' => ['nullable', 'integer', 'min:0'],
+            'nivelacademico' => ['nullable', 'integer', 'min:0'],
+            'regimen' => ['nullable', 'integer', 'min:0'],
+            'resolucionministerial1' => ['nullable', 'string', 'max:255'],
+            'resolucionministerial2' => ['nullable', 'string', 'max:255'],
+            'resolucionministerial3' => ['nullable', 'string', 'max:255'],
+            'version' => ['nullable', 'integer', 'min:0'],
+            'id_instituto' => ['required', 'exists:instituto,id_instituto'],
+            'id_jefecarrera' => ['nullable', 'exists:empleados,id_persona'],
+        ];
     }
 }

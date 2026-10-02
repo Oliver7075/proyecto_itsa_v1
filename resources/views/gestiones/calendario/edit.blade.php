@@ -19,6 +19,7 @@
                     @endforeach
                 </select>
             </div>
+            @include('gestiones.calendario._audiencia')
             <div class="form-group">
                 <label for="nombre">Nombre</label>
                 <input type="text" name="nombre" id="nombre" class="form-control" value="{{ old('nombre', $actividad->nombre) }}" required>

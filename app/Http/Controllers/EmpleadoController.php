@@ -2,29 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Empleado;
-use App\Models\Persona;
-use App\Models\User;
 use App\Models\Cuenta;
+use App\Models\Empleado;
+use App\Models\EmpleadoDocumento;
+use App\Models\Persona;
 use App\Models\Rol;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class EmpleadoController extends Controller
 {
     public function index()
     {
-        $empleados = Empleado::with('persona')->get();
+        $empleados = Empleado::with(['persona', 'documentos'])->get();
+
         return view('admin.empleados.index', compact('empleados'));
     }
 
     public function create()
     {
         $roles = Rol::all();
+
         return view('admin.empleados.create', compact('roles'));
     }
 
@@ -44,19 +47,27 @@ class EmpleadoController extends Controller
             }
 
             $persona = Persona::create($personaData);
-            Empleado::create([
+            $empleado = Empleado::create([
                 'id_persona' => $persona->id_persona,
                 'abreviaturaprofesion' => $validated['abreviaturaprofesion'] ?? null,
                 'codigo' => $validated['codigo'] ?? null,
             ]);
 
+            foreach ($request->file('documentos', []) as $slot => $documento) {
+                EmpleadoDocumento::create([
+                    'id_persona' => $empleado->id_persona,
+                    'slot' => $slot,
+                    'ruta' => $documento->store('empleados/documentos', 'public'),
+                ]);
+            }
+
             $anio = date('Y');
-            $ultimoUsuario = User::where('usuario', 'LIKE', $anio . '%')
+            $ultimoUsuario = User::where('usuario', 'LIKE', $anio.'%')
                 ->orderByDesc('usuario')
                 ->first();
 
             $contador = $ultimoUsuario ? ((int) substr($ultimoUsuario->usuario, 4)) + 1 : 1;
-            $usuarioGenerado = $anio . str_pad($contador, 4, '0', STR_PAD_LEFT);
+            $usuarioGenerado = $anio.str_pad($contador, 4, '0', STR_PAD_LEFT);
 
             $caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
             $passwordGenerada = substr(str_shuffle($caracteres), 0, 10);
@@ -85,54 +96,74 @@ class EmpleadoController extends Controller
         $passwordGenerada = $resultado['passwordGenerada'];
 
         $datosPdf = [
-            'titulo'        => 'COMPROBANTE DE CREDENCIALES DE ACCESO',
-            'user'          => (object) [
-                'name'     => trim($persona->nombre . ' ' . $persona->primerapellido . ' ' . ($persona->segundoapellido ?? '')),
-                'ci'       => $persona->dni,
-                'role'     => $rol->nombre,
-                'carrera'  => '-',
-                'email'    => $persona->email,
+            'titulo' => 'COMPROBANTE DE CREDENCIALES DE ACCESO',
+            'user' => (object) [
+                'name' => trim($persona->nombre.' '.$persona->primerapellido.' '.($persona->segundoapellido ?? '')),
+                'ci' => $persona->dni,
+                'role' => $rol->nombre,
+                'carrera' => '-',
+                'email' => $persona->email,
                 'username' => $usuario->usuario,
             ],
             'plainPassword' => $passwordGenerada,
-            'fecha'         => now()->format('d/m/Y H:i'),
+            'fecha' => now()->format('d/m/Y H:i'),
         ];
 
         $pdf = Pdf::loadView('pdf.credenciales', $datosPdf);
 
-        return $pdf->stream('credenciales_' . $persona->dni . '.pdf');
+        return $pdf->stream('credenciales_'.$persona->dni.'.pdf');
     }
 
     public function edit($id)
     {
-        $empleado = Empleado::findOrFail($id);
-        $roles    = Rol::all();
-        $usuario  = User::where('id_persona', $empleado->id_persona)->first();
-        
+        $empleado = Empleado::with('documentos')->findOrFail($id);
+        $roles = Rol::all();
+        $usuario = User::where('id_persona', $empleado->id_persona)->first();
+
         return view('admin.empleados.edit', compact('empleado', 'roles', 'usuario'));
     }
 
     public function update(Request $request, $id)
     {
         $empleado = Empleado::findOrFail($id);
-        $persona  = $empleado->persona;
-        $usuario  = User::where('id_persona', $empleado->id_persona)->first();
+        $persona = $empleado->persona;
+        $usuario = User::where('id_persona', $empleado->id_persona)->first();
 
         $validated = $request->validate($this->rules($persona->id_persona, $usuario?->id_persona));
 
         // Actualizar persona
         $persona->update(collect($validated)->only([
-            'nombre', 'primerapellido', 'segundoapellido', 'dni', 
-            'fechanacimiento', 'lugarnacimiento', 'nacionalidad', 
-            'sexo', 'lugarexpedicion', 'direccion', 'telefono', 
-            'celular', 'email'
+            'nombre', 'primerapellido', 'segundoapellido', 'dni',
+            'fechanacimiento', 'lugarnacimiento', 'nacionalidad',
+            'sexo', 'lugarexpedicion', 'direccion', 'telefono',
+            'celular', 'email',
         ])->all());
         if ($request->hasFile('foto')) {
+            $rutaAnterior = $persona->foto;
             $persona->update(['foto' => $request->file('foto')->store('personas', 'public')]);
+            if ($rutaAnterior) {
+                Storage::disk('public')->delete($rutaAnterior);
+            }
         }
 
         // Actualizar empleado
         $empleado->update(collect($validated)->only(['abreviaturaprofesion', 'codigo'])->all());
+
+        foreach ($request->file('documentos', []) as $slot => $documento) {
+            $registro = EmpleadoDocumento::where('id_persona', $empleado->id_persona)
+                ->where('slot', $slot)
+                ->first();
+            $rutaAnterior = $registro?->ruta;
+            $nuevoPath = $documento->store('empleados/documentos', 'public');
+            EmpleadoDocumento::updateOrCreate(
+                ['id_persona' => $empleado->id_persona, 'slot' => $slot],
+                ['ruta' => $nuevoPath]
+            );
+
+            if ($rutaAnterior && $rutaAnterior !== $nuevoPath) {
+                Storage::disk('public')->delete($rutaAnterior);
+            }
+        }
 
         // Actualizar usuario
         if ($usuario) {
@@ -157,7 +188,12 @@ class EmpleadoController extends Controller
     public function destroy($id)
     {
         $empleado = Empleado::findOrFail($id);
+        $rutasImagenes = $empleado->documentos()->pluck('ruta')->all();
+        if ($empleado->persona->foto) {
+            $rutasImagenes[] = $empleado->persona->foto;
+        }
         $empleado->persona->delete(); // Elimina en cascada empleado y usuario
+        Storage::disk('public')->delete($rutasImagenes);
 
         return redirect()->route('admin.empleados.index')->with('success', 'Empleado eliminado exitosamente.');
     }
@@ -179,6 +215,8 @@ class EmpleadoController extends Controller
             'celular' => ['nullable', 'digits_between:7,15'],
             'email' => ['nullable', 'email', 'max:255'],
             'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'documentos' => ['nullable', 'array:1,2,3,4', 'max:4'],
+            'documentos.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'abreviaturaprofesion' => ['nullable', 'string', 'max:100'],
             'codigo' => ['nullable', 'string', 'max:255'],
             'id_rol' => ['required', 'exists:rol,id_rol'],

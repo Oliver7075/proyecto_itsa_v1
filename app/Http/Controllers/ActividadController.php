@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Actividad;
 use App\Models\Carrera;
 use App\Models\GestionAcademica;
+use App\Models\Recurso;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
+use App\Support\MenuResourceSync;
 
 class ActividadController extends Controller
 {
     public function index(Request $request)
     {
         $gestiones = GestionAcademica::habilitadas()->orderByDesc('gestion')->orderBy('periodo')->get();
-        $query = Actividad::with(['gestionAcademica', 'carreras', 'usuarios'])
+        $query = Actividad::with(['gestionAcademica', 'carreras', 'usuarios', 'funcionalidadRecurso'])
             ->when($request->filled('id_gestionacademica'), fn ($query) =>
                 $query->where('id_gestionacademica', $request->id_gestionacademica))
             ->when($request->filled('buscar'), fn ($query) =>
@@ -36,8 +38,9 @@ class ActividadController extends Controller
         $gestionSeleccionada = $request->input('id_gestionacademica');
         $carreras = Carrera::orderBy('nombre')->get();
         $usuarios = User::with('persona')->orderBy('usuario')->get();
+        $funcionalidades = $this->funcionalidades();
 
-        return view('gestiones.calendario.create', compact('gestiones', 'gestionSeleccionada', 'carreras', 'usuarios'));
+        return view('gestiones.calendario.create', compact('gestiones', 'gestionSeleccionada', 'carreras', 'usuarios', 'funcionalidades'));
     }
 
     public function store(Request $request)
@@ -59,8 +62,9 @@ class ActividadController extends Controller
         $gestiones = GestionAcademica::habilitadas()->orderByDesc('gestion')->orderBy('periodo')->get();
         $carreras = Carrera::orderBy('nombre')->get();
         $usuarios = User::with('persona')->orderBy('usuario')->get();
+        $funcionalidades = $this->funcionalidades();
 
-        return view('gestiones.calendario.edit', compact('actividad', 'gestiones', 'carreras', 'usuarios'));
+        return view('gestiones.calendario.edit', compact('actividad', 'gestiones', 'carreras', 'usuarios', 'funcionalidades'));
     }
 
     public function update(Request $request, $id)
@@ -96,7 +100,7 @@ class ActividadController extends Controller
             'descripcion' => ['nullable', 'string', 'max:255'],
             'inicio' => ['nullable', 'date'],
             'fin' => ['nullable', 'date', 'after_or_equal:inicio'],
-            'funcionalidad' => ['nullable', 'integer'],
+            'funcionalidad' => ['nullable', 'integer', 'exists:recurso,id_recurso'],
             'id_gestionacademica' => ['required', 'exists:gestionacademica,id_gestionacademica'],
             'audiencia' => ['required', 'in:general,carrera,usuario'],
             'carreras' => ['required_if:audiencia,carrera', 'array'],
@@ -126,5 +130,15 @@ class ActividadController extends Controller
                 'id_gestionacademica' => 'La gestión académica seleccionada está deshabilitada.',
             ]);
         }
+    }
+
+    private function funcionalidades()
+    {
+        MenuResourceSync::sync();
+
+        return Recurso::whereNotIn('urlpattern', ['planes/calendario', 'planes/gestiones'])
+            ->where('urlpattern', 'not like', 'admin/%')
+            ->orderBy('id_recurso')
+            ->get();
     }
 }

@@ -23,6 +23,11 @@ class Actividad extends Model
         return $this->belongsTo(GestionAcademica::class, 'id_gestionacademica', 'id_gestionacademica');
     }
 
+    public function funcionalidadRecurso()
+    {
+        return $this->belongsTo(Recurso::class, 'funcionalidad', 'id_recurso');
+    }
+
     public function carreras()
     {
         return $this->belongsToMany(Carrera::class, 'actividad_carrera', 'id_actividad', 'id_carrera', 'id_actividad', 'id_carrera');

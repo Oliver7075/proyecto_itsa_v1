@@ -16,4 +16,9 @@ class Empleado extends Model
     {
         return $this->belongsTo(Persona::class, 'id_persona', 'id_persona'); // Relación con Persona usando id_persona como clave foránea
     }
+
+    public function documentos()
+    {
+        return $this->hasMany(EmpleadoDocumento::class, 'id_persona', 'id_persona');
+    }
 }

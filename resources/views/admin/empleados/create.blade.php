@@ -13,7 +13,23 @@
                 <div class="row">
                     <div class="form-group">
                         <label>foto</label>
-                        <input type="file" name="foto" class="form-control" accept=".jpg,.jpeg,.png,.webp">
+                        <input type="file" name="foto" class="form-control" accept=".jpg,.jpeg,.png,.webp" data-image-preview="foto-preview">
+                        @include('partials.image-preview', ['id' => 'foto-preview', 'alt' => 'Previsualización de la foto del empleado'])
+                    </div>
+                </div>
+                <div class="row">
+                    @foreach(range(1, 4) as $slot)
+                        <div class="col-md-3 form-group">
+                            <label for="documento_{{ $slot }}">Imagen de documento {{ $slot }}</label>
+                            <input type="file" name="documentos[{{ $slot }}]" id="documento_{{ $slot }}" class="form-control @error('documentos.' . $slot) is-invalid @enderror" accept=".jpg,.jpeg,.png,.webp" data-image-preview="documento-preview-{{ $slot }}">
+                            @include('partials.image-preview', ['id' => 'documento-preview-' . $slot, 'alt' => 'Previsualización del documento ' . $slot])
+                            @error('documentos.' . $slot)
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endforeach
+                    <div class="col-12">
+                        <small class="form-text text-muted">Puedes adjuntar hasta 4 imágenes JPG, PNG o WEBP (máximo 5 MB cada una).</small>
                     </div>
                 </div>
 

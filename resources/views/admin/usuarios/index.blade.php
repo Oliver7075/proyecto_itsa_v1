@@ -50,7 +50,16 @@
                     </td>
                     <td>
                         <a href="{{ route('admin.usuarios.edit', $usuario->id_persona) }}" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>
-                        <a href="#" class="btn btn-sm btn-warning"><i class="fa fa-key"></i></a>
+                        <button type="button"
+                                class="btn btn-sm btn-warning"
+                                title="Restablecer contraseña"
+                                aria-label="Restablecer contraseña"
+                                data-toggle="modal"
+                                data-target="#resetPasswordModal"
+                                data-action="{{ route('admin.usuarios.regenerar-credenciales', $usuario->id_persona) }}"
+                                data-user="{{ trim(($usuario->persona->nombre ?? '') . ' ' . ($usuario->persona->primerapellido ?? '')) }}">
+                            <i class="fa fa-key"></i>
+                        </button>
                     </td>
                 </tr>
                 @empty
@@ -62,4 +71,45 @@
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="resetPasswordModalLabel">
+                    <i class="fas fa-key mr-2"></i> Restablecer contraseña
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="resetPasswordForm" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <p class="mb-0">
+                        ¿Deseas generar una nueva contraseña para
+                        <strong id="resetPasswordUser"></strong>?
+                        Se actualizarán sus credenciales y se abrirá el comprobante PDF.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-check mr-1"></i> Sí, restablecer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@stop
+
+@section('js')
+<script>
+    $('#resetPasswordModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        $('#resetPasswordForm').attr('action', button.data('action'));
+        $('#resetPasswordUser').text(button.data('user'));
+    });
+</script>
 @stop

@@ -12,7 +12,7 @@ class CarreraController extends Controller
 {
     public function index()
     {
-        $carreras = Carrera::all();
+        $carreras = Carrera::with(['instituto', 'jefeCarrera.persona'])->get();
         return view('planes.carreras.index', compact('carreras'));
     }
 
@@ -24,6 +24,14 @@ class CarreraController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate($this->rules());
+        $instituto = Instituto::first();
+        if (!$instituto) {
+            return back()
+                ->withErrors(['id_instituto' => 'Primero configure los datos del instituto.'])
+                ->withInput();
+        }
+
+        $validated['id_instituto'] = $instituto->id_instituto;
         Carrera::create($validated);
 
         return redirect()->route('planes.carreras.index')->with('success', 'Carrera creada correctamente.');
@@ -40,6 +48,14 @@ class CarreraController extends Controller
     {
         $carrera = Carrera::findOrFail($id);
         $validated = $request->validate($this->rules($carrera->id_carrera));
+        $instituto = Instituto::first();
+        if (!$instituto) {
+            return back()
+                ->withErrors(['id_instituto' => 'Primero configure los datos del instituto.'])
+                ->withInput();
+        }
+
+        $validated['id_instituto'] = $instituto->id_instituto;
         $carrera->update($validated);
 
         return redirect()->route('planes.carreras.index')->with('success', 'Carrera actualizada correctamente.');
@@ -55,7 +71,7 @@ class CarreraController extends Controller
     private function formData(): array
     {
         return [
-            'institutos' => Instituto::orderBy('nombreinstituto')->get(),
+            'instituto' => Instituto::first(),
             'jefesCarrera' => Empleado::with('persona')->get(),
         ];
     }
@@ -73,7 +89,6 @@ class CarreraController extends Controller
             'resolucionministerial2' => ['nullable', 'string', 'max:255'],
             'resolucionministerial3' => ['nullable', 'string', 'max:255'],
             'version' => ['nullable', 'integer', 'min:0'],
-            'id_instituto' => ['required', 'exists:instituto,id_instituto'],
             'id_jefecarrera' => ['nullable', 'exists:empleados,id_persona'],
         ];
     }

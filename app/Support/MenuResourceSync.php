@@ -6,9 +6,9 @@ use App\Models\Recurso;
 
 class MenuResourceSync
 {
-    public static function sync(): void
+    public static function sync(?array $items = null): void
     {
-        self::syncItems(config('adminlte.menu', []));
+        self::syncItems($items ?? config('functionality.menu', config('adminlte.menu', [])));
     }
 
     private static function syncItems(array $items): void

@@ -38,8 +38,16 @@
                 </div>
             </div>
             <div class="form-group mb-0">
-                <label for="funcionalidad">Funcionalidad</label>
-                <input type="number" name="funcionalidad" id="funcionalidad" class="form-control" value="{{ old('funcionalidad') }}">
+                <label for="funcionalidad">Habilitar sección</label>
+                <select name="funcionalidad" id="funcionalidad" class="form-control">
+                    <option value="">No habilita una sección</option>
+                    @foreach($funcionalidades as $funcionalidad)
+                        <option value="{{ $funcionalidad->id_recurso }}" @selected(old('funcionalidad') == $funcionalidad->id_recurso)>
+                            Sección {{ $funcionalidad->id_recurso }} - {{ $funcionalidad->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+                <small class="form-text text-muted">El número se asigna automáticamente a cada módulo. La sección queda habilitada solo durante las fechas indicadas y para la audiencia seleccionada.</small>
             </div>
         </div>
         <div class="card-footer d-flex justify-content-end">

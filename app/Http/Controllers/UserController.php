@@ -8,6 +8,7 @@ use App\Models\Persona;
 use App\Models\Rol;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
@@ -67,19 +68,29 @@ class UserController extends Controller
      */
     public function regenerarCredenciales($id_persona)
     {
-        $usuario = User::findOrFail($id_persona);
+        $usuario = User::with('persona', 'cuenta.rol')->findOrFail($id_persona);
         $persona = $usuario->persona;
 
         $newPlainPassword = Str::password(8, letters: true, numbers: true, symbols: false, spaces: false);
+        $passwordHash = Hash::make($newPlainPassword);
 
-        $usuario->update([
-            'password' => Hash::make($newPlainPassword),
-        ]);
+        DB::transaction(function () use ($usuario, $passwordHash) {
+            $usuario->update(['password' => $passwordHash]);
+            if ($usuario->cuenta) {
+                $usuario->cuenta->update(['password' => $passwordHash]);
+            }
+        });
 
         $data = [
             'titulo'        => 'REGENERACIÓN DE CREDENCIALES DE ACCESO',
-            'usuario'       => $usuario,
-            'persona'       => $persona,
+            'user'          => (object) [
+                'name'     => trim($persona->nombre . ' ' . $persona->primerapellido . ' ' . ($persona->segundoapellido ?? '')),
+                'ci'       => $persona->dni,
+                'role'     => $usuario->cuenta?->rol?->nombre ?? '-',
+                'carrera'  => '-',
+                'email'    => $persona->email,
+                'username' => $usuario->usuario,
+            ],
             'plainPassword' => $newPlainPassword,
             'fecha'         => now()->format('d/m/Y H:i'),
         ];

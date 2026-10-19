@@ -22,18 +22,6 @@
 
         <div class="row">
             <div class="col-md-4 form-group">
-                <label for="id_instituto">Instituto *</label>
-                <select name="id_instituto" id="id_instituto" class="form-control @error('id_instituto') is-invalid @enderror" required>
-                    <option value="">Seleccione un instituto</option>
-                    @foreach($institutos as $instituto)
-                        <option value="{{ $instituto->id_instituto }}" {{ old('id_instituto', $carrera->id_instituto ?? '') == $instituto->id_instituto ? 'selected' : '' }}>
-                            {{ $instituto->nombreinstituto }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('id_instituto')<span class="invalid-feedback">{{ $message }}</span>@enderror
-            </div>
-            <div class="col-md-4 form-group">
                 <label for="id_jefecarrera">Jefe de carrera</label>
                 <select name="id_jefecarrera" id="id_jefecarrera" class="form-control @error('id_jefecarrera') is-invalid @enderror">
                     <option value="">Sin asignar</option>
@@ -44,6 +32,16 @@
                     @endforeach
                 </select>
                 @error('id_jefecarrera')<span class="invalid-feedback">{{ $message }}</span>@enderror
+            </div>
+            <div class="col-md-4 form-group">
+                <label for="instituto_nombre">Instituto</label>
+                @if($instituto)
+                    <input type="text" id="instituto_nombre" class="form-control" value="{{ $instituto->nombreinstituto }}" readonly>
+                    <small class="form-text text-muted">Se asignará el instituto configurado en Administración.</small>
+                @else
+                    <input type="text" id="instituto_nombre" class="form-control" value="No hay un instituto configurado" readonly>
+                @endif
+                @error('id_instituto')<span class="text-danger">{{ $message }}</span>@enderror
             </div>
             <div class="col-md-4 form-group">
                 <label for="nivelacademico">Nivel académico</label>

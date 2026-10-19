@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        config(['functionality.menu' => config('adminlte.menu', [])]);
         $this->filterMenuByPermissions();
     }
 

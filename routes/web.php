@@ -32,6 +32,7 @@ Route::delete('/admin/empleados/{id}', [App\Http\Controllers\EmpleadoController:
 Route::get('/admin/usuarios', [App\Http\Controllers\UserController::class, 'index'])->name('admin.usuarios.index')->middleware('auth');
 Route::get('/admin/usuarios/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('admin.usuarios.edit')->middleware('auth');
 Route::put('/admin/usuarios/{id}', [App\Http\Controllers\UserController::class, 'update'])->name('admin.usuarios.update')->middleware('auth');
+Route::post('/admin/usuarios/{id}/regenerar-credenciales', [App\Http\Controllers\UserController::class, 'regenerarCredenciales'])->name('admin.usuarios.regenerar-credenciales')->middleware('auth');
 //rutas para los roles
 Route::get('/admin/roles', [RolController::class, 'index'])->name('admin.roles.index')->middleware('auth');
 Route::get('/admin/roles/create', [RolController::class, 'create'])->name('admin.roles.create')->middleware('auth');

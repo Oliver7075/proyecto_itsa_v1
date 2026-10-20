@@ -1,0 +1,182 @@
+:root {
+    --itsa-green: #176b45;
+    --itsa-green-dark: #104d34;
+    --itsa-green-light: #e9f4ed;
+    --itsa-green-border: #b8d8c4;
+}
+
+body {
+    background-color: #f4f8f5;
+}
+
+.main-sidebar.sidebar-dark-success {
+    background-color: var(--itsa-green-dark);
+}
+
+.brand-link {
+    border-bottom-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.brand-link .brand-image {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    background: #fff;
+    padding: 2px;
+}
+
+.brand-link .brand-text {
+    color: #fff;
+    font-weight: 600 !important;
+}
+
+.nav-sidebar .nav-link.active,
+.nav-sidebar .show > .nav-link {
+    background-color: var(--itsa-green) !important;
+    color: #fff !important;
+}
+
+.navbar-white.navbar-light {
+    border-bottom: 2px solid var(--itsa-green-border);
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link:focus {
+    color: var(--itsa-green-dark);
+}
+
+.btn-primary,
+.bg-primary,
+.badge-primary,
+.page-item.active .page-link,
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--itsa-green) !important;
+    border-color: var(--itsa-green) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--itsa-green-dark) !important;
+    border-color: var(--itsa-green-dark) !important;
+}
+
+.text-primary,
+a {
+    color: var(--itsa-green);
+}
+
+a:hover {
+    color: var(--itsa-green-dark);
+}
+
+.card-primary:not(.card-outline) > .card-header {
+    background-color: var(--itsa-green);
+    border-color: var(--itsa-green);
+}
+
+.card-primary.card-outline {
+    border-top-color: var(--itsa-green);
+}
+
+.form-control:focus,
+.custom-select:focus {
+    border-color: #70a989;
+    box-shadow: 0 0 0 0.2rem rgba(23, 107, 69, 0.18);
+}
+
+.itsa-auth-logo {
+    display: block;
+    object-fit: contain;
+    margin: 0 auto 0.5rem;
+}
+
+.preloader img {
+    border-radius: 0.75rem !important;
+    object-fit: contain;
+}
+
+.login-logo a,
+.register-logo a {
+    color: var(--itsa-green-dark);
+}
+
+.login-logo .itsa-brand-word,
+.register-logo .itsa-brand-word {
+    color: var(--itsa-green-dark);
+    font-family: "Aptos Display", "Segoe UI", sans-serif;
+    font-size: 0.92em;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-shadow: 0 1px 0 rgba(16, 77, 52, 0.12);
+}
+
+.brand-link .itsa-brand-word {
+    font-family: "Aptos Display", "Segoe UI", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.login-box .btn-success,
+.register-box .btn-success {
+    background-color: var(--itsa-green);
+    border-color: var(--itsa-green);
+}
+
+.itsa-welcome {
+    align-items: center;
+    background: linear-gradient(135deg, #e9f4ed, #f7faf8 55%, #d6ecdf);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.itsa-welcome-card {
+    background: #fff;
+    border: 1px solid #d6e8dc;
+    border-radius: 1.25rem;
+    box-shadow: 0 1.5rem 4rem rgba(16, 77, 52, 0.12);
+    max-width: 38rem;
+    padding: clamp(2rem, 7vw, 4rem);
+    text-align: center;
+    width: 100%;
+}
+
+.itsa-welcome-logo {
+    height: 6rem;
+    margin-bottom: 1.5rem;
+    object-fit: contain;
+    width: 6rem;
+}
+
+.itsa-welcome h1 {
+    color: #104d34;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.itsa-welcome p {
+    color: #53665b;
+    font-size: 1.05rem;
+    margin-bottom: 1.75rem;
+}
+
+.itsa-welcome .btn {
+    background: #176b45;
+    border: 1px solid #176b45;
+    border-radius: 0.5rem;
+    color: #fff;
+    display: inline-block;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+}
+
+.itsa-welcome .btn:hover,
+.itsa-welcome .btn:focus {
+    background: #104d34;
+    border-color: #104d34;
+    color: #fff;
+}

@@ -37,4 +37,31 @@ class LoginUsernameTest extends TestCase
         $this->assertAuthenticatedAs($user);
         $this->assertSame('Maria Flores', auth()->user()->name);
     }
+
+    public function test_invalid_login_credentials_are_reported_in_spanish(): void
+    {
+        $response = $this->from('/login')->post(route('login'), [
+            'usuario' => 'no-existe',
+            'password' => 'incorrecta',
+        ]);
+
+        $response->assertRedirect('/login')
+            ->assertSessionHasErrors([
+                'usuario' => 'El usuario o la contraseña son incorrectos.',
+            ]);
+    }
+
+    public function test_login_validation_errors_are_reported_in_spanish(): void
+    {
+        $response = $this->from('/login')->post(route('login'), []);
+
+        $response->assertRedirect('/login')
+            ->assertSessionHasErrors([
+                'usuario' => 'El campo usuario es obligatorio cuando correo electrónico no esté presente.',
+                'contrasena' => 'El campo contraseña es obligatorio cuando contraseña no esté presente.',
+            ]);
+
+        $errors = implode(' ', session('errors')->all());
+        $this->assertStringNotContainsString('The ', $errors);
+    }
 }
